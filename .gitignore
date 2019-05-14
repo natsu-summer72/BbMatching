@@ -1,0 +1,4 @@
+.idea/*
+vendor/*
+firebaseAccountKey.json
+.env
