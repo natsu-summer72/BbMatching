@@ -11,3 +11,10 @@ DSLでAPIのデザインを記述して、コードを自動生成する。
 公式ドキュメント
 https://goa.design
 
+##### Swagger-ui によるAPI管理画面
+
+ <img src=https://github.com/natsu-summer72/BbMatching/blob/master/example/swagger-ui.png>
+ 
+ <img src=https://github.com/natsu-summer72/BbMatching/blob/master/example/API_console.png>
+ 
+ <img src=https://github.com/natsu-summer72/BbMatching/blob/master/example/API_result.png>
