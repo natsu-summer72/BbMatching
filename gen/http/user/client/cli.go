@@ -105,3 +105,16 @@ func BuildDeleteCurrentUserPayload(userDeleteCurrentUserToken string) (*user.Ses
 	}
 	return payload, nil
 }
+
+// BuildGetJWTPayload builds the payload for the User Get JWT endpoint from CLI
+// flags.
+func BuildGetJWTPayload(userGetJWTUserID string) (*user.GetJWTPayload, error) {
+	var userID string
+	{
+		userID = userGetJWTUserID
+	}
+	payload := &user.GetJWTPayload{
+		UserID: userID,
+	}
+	return payload, nil
+}

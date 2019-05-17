@@ -38,6 +38,8 @@ type Service interface {
 	UpdateCurrentUser(context.Context, *UpdateUserPayload) (res *BbmatchingUser, view string, err error)
 	// 現在のセッションに紐づくユーザーを削除します。
 	DeleteCurrentUser(context.Context, *SessionTokenPayload) (err error)
+	// 指定したユーザーIDのJWTを取得します
+	GetJWT(context.Context, *GetJWTPayload) (res *BbmatchingJWT, err error)
 }
 
 // Auther defines the authorization functions to be implemented by the service.
@@ -54,7 +56,7 @@ const ServiceName = "User"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [5]string{"Get current user", "Get User", "List User", "Update current user", "Delete current user"}
+var MethodNames = [6]string{"Get current user", "Get User", "List User", "Update current user", "Delete current user", "Get JWT"}
 
 // SessionTokenPayload is the payload type of the User service Get current user
 // method.
@@ -68,14 +70,16 @@ type SessionTokenPayload struct {
 type BbmatchingUser struct {
 	// firebaseのユーザーID
 	UserID string
+	// チームの表示名
+	UserName string
 	// チームのプライマリメールアドレス
 	Email string
 	// チームのメイン電話番号
 	PhoneNumber string
 	// チームの写真URL
 	PhotoURL string
-	// チームの表示名
-	UserName string
+	// ユーザーのプライマリメールアドレスが確認されているか。
+	EmailVerified bool
 }
 
 // GetUserPayload is the payload type of the User service Get User method.
@@ -103,6 +107,18 @@ type UpdateUserPayload struct {
 	PhotoURL *string
 	// チームの表示名
 	UserName *string
+}
+
+// GetJWTPayload is the payload type of the User service Get JWT method.
+type GetJWTPayload struct {
+	// firebaseのユーザーID
+	UserID string
+}
+
+// BbmatchingJWT is the result type of the User service Get JWT method.
+type BbmatchingJWT struct {
+	// Json Web Token
+	JWT *string
 }
 
 // Credentials are invalid
@@ -175,6 +191,29 @@ func NewViewedBbmatchingUserCollection(res BbmatchingUserCollection, view string
 	return vres
 }
 
+// NewBbmatchingJWT initializes result type BbmatchingJWT from viewed result
+// type BbmatchingJWT.
+func NewBbmatchingJWT(vres *userviews.BbmatchingJWT) *BbmatchingJWT {
+	var res *BbmatchingJWT
+	switch vres.View {
+	case "default", "":
+		res = newBbmatchingJWT(vres.Projected)
+	}
+	return res
+}
+
+// NewViewedBbmatchingJWT initializes viewed result type BbmatchingJWT from
+// result type BbmatchingJWT using the given view.
+func NewViewedBbmatchingJWT(res *BbmatchingJWT, view string) *userviews.BbmatchingJWT {
+	var vres *userviews.BbmatchingJWT
+	switch view {
+	case "default", "":
+		p := newBbmatchingJWTView(res)
+		vres = &userviews.BbmatchingJWT{p, "default"}
+	}
+	return vres
+}
+
 // newBbmatchingUser converts projected type BbmatchingUser to service type
 // BbmatchingUser.
 func newBbmatchingUser(vres *userviews.BbmatchingUserView) *BbmatchingUser {
@@ -193,6 +232,9 @@ func newBbmatchingUser(vres *userviews.BbmatchingUserView) *BbmatchingUser {
 	}
 	if vres.UserName != nil {
 		res.UserName = *vres.UserName
+	}
+	if vres.EmailVerified != nil {
+		res.EmailVerified = *vres.EmailVerified
 	}
 	return res
 }
@@ -217,11 +259,12 @@ func newBbmatchingUserTiny(vres *userviews.BbmatchingUserView) *BbmatchingUser {
 // type BbmatchingUserView using the "default" view.
 func newBbmatchingUserView(res *BbmatchingUser) *userviews.BbmatchingUserView {
 	vres := &userviews.BbmatchingUserView{
-		UserID:      &res.UserID,
-		Email:       &res.Email,
-		PhoneNumber: &res.PhoneNumber,
-		PhotoURL:    &res.PhotoURL,
-		UserName:    &res.UserName,
+		UserID:        &res.UserID,
+		UserName:      &res.UserName,
+		Email:         &res.Email,
+		PhoneNumber:   &res.PhoneNumber,
+		PhotoURL:      &res.PhotoURL,
+		EmailVerified: &res.EmailVerified,
 	}
 	return vres
 }
@@ -230,9 +273,9 @@ func newBbmatchingUserView(res *BbmatchingUser) *userviews.BbmatchingUserView {
 // type BbmatchingUserView using the "tiny" view.
 func newBbmatchingUserViewTiny(res *BbmatchingUser) *userviews.BbmatchingUserView {
 	vres := &userviews.BbmatchingUserView{
+		UserName: &res.UserName,
 		Email:    &res.Email,
 		PhotoURL: &res.PhotoURL,
-		UserName: &res.UserName,
 	}
 	return vres
 }
@@ -275,6 +318,24 @@ func newBbmatchingUserCollectionViewTiny(res BbmatchingUserCollection) userviews
 	vres := make(userviews.BbmatchingUserCollectionView, len(res))
 	for i, n := range res {
 		vres[i] = newBbmatchingUserViewTiny(n)
+	}
+	return vres
+}
+
+// newBbmatchingJWT converts projected type BbmatchingJWT to service type
+// BbmatchingJWT.
+func newBbmatchingJWT(vres *userviews.BbmatchingJWTView) *BbmatchingJWT {
+	res := &BbmatchingJWT{
+		JWT: vres.JWT,
+	}
+	return res
+}
+
+// newBbmatchingJWTView projects result type BbmatchingJWT into projected type
+// BbmatchingJWTView using the "default" view.
+func newBbmatchingJWTView(res *BbmatchingJWT) *userviews.BbmatchingJWTView {
+	vres := &userviews.BbmatchingJWTView{
+		JWT: res.JWT,
 	}
 	return vres
 }

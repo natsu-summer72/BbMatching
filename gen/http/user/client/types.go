@@ -33,14 +33,16 @@ type UpdateCurrentUserRequestBody struct {
 type GetCurrentUserResponseBody struct {
 	// firebaseのユーザーID
 	UserID *string `form:"user_id,omitempty" json:"user_id,omitempty" xml:"user_id,omitempty"`
+	// チームの表示名
+	UserName *string `form:"UserName,omitempty" json:"UserName,omitempty" xml:"UserName,omitempty"`
 	// チームのプライマリメールアドレス
 	Email *string `form:"email,omitempty" json:"email,omitempty" xml:"email,omitempty"`
 	// チームのメイン電話番号
 	PhoneNumber *string `form:"phoneNumber,omitempty" json:"phoneNumber,omitempty" xml:"phoneNumber,omitempty"`
 	// チームの写真URL
 	PhotoURL *string `form:"photoURL,omitempty" json:"photoURL,omitempty" xml:"photoURL,omitempty"`
-	// チームの表示名
-	UserName *string `form:"UserName,omitempty" json:"UserName,omitempty" xml:"UserName,omitempty"`
+	// ユーザーのプライマリメールアドレスが確認されているか。
+	EmailVerified *bool `form:"email_verified,omitempty" json:"email_verified,omitempty" xml:"email_verified,omitempty"`
 }
 
 // GetUserResponseBody is the type of the "User" service "Get User" endpoint
@@ -48,14 +50,16 @@ type GetCurrentUserResponseBody struct {
 type GetUserResponseBody struct {
 	// firebaseのユーザーID
 	UserID *string `form:"user_id,omitempty" json:"user_id,omitempty" xml:"user_id,omitempty"`
+	// チームの表示名
+	UserName *string `form:"UserName,omitempty" json:"UserName,omitempty" xml:"UserName,omitempty"`
 	// チームのプライマリメールアドレス
 	Email *string `form:"email,omitempty" json:"email,omitempty" xml:"email,omitempty"`
 	// チームのメイン電話番号
 	PhoneNumber *string `form:"phoneNumber,omitempty" json:"phoneNumber,omitempty" xml:"phoneNumber,omitempty"`
 	// チームの写真URL
 	PhotoURL *string `form:"photoURL,omitempty" json:"photoURL,omitempty" xml:"photoURL,omitempty"`
-	// チームの表示名
-	UserName *string `form:"UserName,omitempty" json:"UserName,omitempty" xml:"UserName,omitempty"`
+	// ユーザーのプライマリメールアドレスが確認されているか。
+	EmailVerified *bool `form:"email_verified,omitempty" json:"email_verified,omitempty" xml:"email_verified,omitempty"`
 }
 
 // ListUserResponseBody is the type of the "User" service "List User" endpoint
@@ -67,14 +71,23 @@ type ListUserResponseBody []*BbmatchingUserResponse
 type UpdateCurrentUserResponseBody struct {
 	// firebaseのユーザーID
 	UserID *string `form:"user_id,omitempty" json:"user_id,omitempty" xml:"user_id,omitempty"`
+	// チームの表示名
+	UserName *string `form:"UserName,omitempty" json:"UserName,omitempty" xml:"UserName,omitempty"`
 	// チームのプライマリメールアドレス
 	Email *string `form:"email,omitempty" json:"email,omitempty" xml:"email,omitempty"`
 	// チームのメイン電話番号
 	PhoneNumber *string `form:"phoneNumber,omitempty" json:"phoneNumber,omitempty" xml:"phoneNumber,omitempty"`
 	// チームの写真URL
 	PhotoURL *string `form:"photoURL,omitempty" json:"photoURL,omitempty" xml:"photoURL,omitempty"`
-	// チームの表示名
-	UserName *string `form:"UserName,omitempty" json:"UserName,omitempty" xml:"UserName,omitempty"`
+	// ユーザーのプライマリメールアドレスが確認されているか。
+	EmailVerified *bool `form:"email_verified,omitempty" json:"email_verified,omitempty" xml:"email_verified,omitempty"`
+}
+
+// GetJWTResponseBody is the type of the "User" service "Get JWT" endpoint HTTP
+// response body.
+type GetJWTResponseBody struct {
+	// Json Web Token
+	JWT *string `form:"JWT,omitempty" json:"JWT,omitempty" xml:"JWT,omitempty"`
 }
 
 // GetCurrentUserUnauthorizedResponseBody is the type of the "User" service
@@ -99,18 +112,24 @@ type UpdateCurrentUserUnauthorizedResponseBody string
 // error.
 type DeleteCurrentUserUnauthorizedResponseBody string
 
+// GetJWTUnauthorizedResponseBody is the type of the "User" service "Get JWT"
+// endpoint HTTP response body for the "unauthorized" error.
+type GetJWTUnauthorizedResponseBody string
+
 // BbmatchingUserResponse is used to define fields on response body types.
 type BbmatchingUserResponse struct {
 	// firebaseのユーザーID
 	UserID *string `form:"user_id,omitempty" json:"user_id,omitempty" xml:"user_id,omitempty"`
+	// チームの表示名
+	UserName *string `form:"UserName,omitempty" json:"UserName,omitempty" xml:"UserName,omitempty"`
 	// チームのプライマリメールアドレス
 	Email *string `form:"email,omitempty" json:"email,omitempty" xml:"email,omitempty"`
 	// チームのメイン電話番号
 	PhoneNumber *string `form:"phoneNumber,omitempty" json:"phoneNumber,omitempty" xml:"phoneNumber,omitempty"`
 	// チームの写真URL
 	PhotoURL *string `form:"photoURL,omitempty" json:"photoURL,omitempty" xml:"photoURL,omitempty"`
-	// チームの表示名
-	UserName *string `form:"UserName,omitempty" json:"UserName,omitempty" xml:"UserName,omitempty"`
+	// ユーザーのプライマリメールアドレスが確認されているか。
+	EmailVerified *bool `form:"email_verified,omitempty" json:"email_verified,omitempty" xml:"email_verified,omitempty"`
 }
 
 // NewUpdateCurrentUserRequestBody builds the HTTP request body from the
@@ -129,11 +148,12 @@ func NewUpdateCurrentUserRequestBody(p *user.UpdateUserPayload) *UpdateCurrentUs
 // endpoint result from a HTTP "OK" response.
 func NewGetCurrentUserBbmatchingUserOK(body *GetCurrentUserResponseBody) *userviews.BbmatchingUserView {
 	v := &userviews.BbmatchingUserView{
-		UserID:      body.UserID,
-		Email:       body.Email,
-		PhoneNumber: body.PhoneNumber,
-		PhotoURL:    body.PhotoURL,
-		UserName:    body.UserName,
+		UserID:        body.UserID,
+		UserName:      body.UserName,
+		Email:         body.Email,
+		PhoneNumber:   body.PhoneNumber,
+		PhotoURL:      body.PhotoURL,
+		EmailVerified: body.EmailVerified,
 	}
 	return v
 }
@@ -149,11 +169,12 @@ func NewGetCurrentUserUnauthorized(body GetCurrentUserUnauthorizedResponseBody) 
 // result from a HTTP "OK" response.
 func NewGetUserBbmatchingUserOK(body *GetUserResponseBody) *userviews.BbmatchingUserView {
 	v := &userviews.BbmatchingUserView{
-		UserID:      body.UserID,
-		Email:       body.Email,
-		PhoneNumber: body.PhoneNumber,
-		PhotoURL:    body.PhotoURL,
-		UserName:    body.UserName,
+		UserID:        body.UserID,
+		UserName:      body.UserName,
+		Email:         body.Email,
+		PhoneNumber:   body.PhoneNumber,
+		PhotoURL:      body.PhotoURL,
+		EmailVerified: body.EmailVerified,
 	}
 	return v
 }
@@ -171,11 +192,12 @@ func NewListUserBbmatchingUserCollectionOK(body ListUserResponseBody) userviews.
 	v := make([]*userviews.BbmatchingUserView, len(body))
 	for i, val := range body {
 		v[i] = &userviews.BbmatchingUserView{
-			UserID:      val.UserID,
-			Email:       val.Email,
-			PhoneNumber: val.PhoneNumber,
-			PhotoURL:    val.PhotoURL,
-			UserName:    val.UserName,
+			UserID:        val.UserID,
+			UserName:      val.UserName,
+			Email:         val.Email,
+			PhoneNumber:   val.PhoneNumber,
+			PhotoURL:      val.PhotoURL,
+			EmailVerified: val.EmailVerified,
 		}
 	}
 	return v
@@ -192,11 +214,12 @@ func NewListUserUnauthorized(body ListUserUnauthorizedResponseBody) user.Unautho
 // user" endpoint result from a HTTP "OK" response.
 func NewUpdateCurrentUserBbmatchingUserOK(body *UpdateCurrentUserResponseBody) *userviews.BbmatchingUserView {
 	v := &userviews.BbmatchingUserView{
-		UserID:      body.UserID,
-		Email:       body.Email,
-		PhoneNumber: body.PhoneNumber,
-		PhotoURL:    body.PhotoURL,
-		UserName:    body.UserName,
+		UserID:        body.UserID,
+		UserName:      body.UserName,
+		Email:         body.Email,
+		PhoneNumber:   body.PhoneNumber,
+		PhotoURL:      body.PhotoURL,
+		EmailVerified: body.EmailVerified,
 	}
 	return v
 }
@@ -215,11 +238,30 @@ func NewDeleteCurrentUserUnauthorized(body DeleteCurrentUserUnauthorizedResponse
 	return v
 }
 
+// NewGetJWTBbmatchingJWTOK builds a "User" service "Get JWT" endpoint result
+// from a HTTP "OK" response.
+func NewGetJWTBbmatchingJWTOK(body *GetJWTResponseBody) *userviews.BbmatchingJWTView {
+	v := &userviews.BbmatchingJWTView{
+		JWT: body.JWT,
+	}
+	return v
+}
+
+// NewGetJWTUnauthorized builds a User service Get JWT endpoint unauthorized
+// error.
+func NewGetJWTUnauthorized(body GetJWTUnauthorizedResponseBody) user.Unauthorized {
+	v := user.Unauthorized(body)
+	return v
+}
+
 // ValidateBbmatchingUserResponse runs the validations defined on
 // BbmatchingUserResponse
 func ValidateBbmatchingUserResponse(body *BbmatchingUserResponse) (err error) {
 	if body.UserID == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("user_id", "body"))
+	}
+	if body.UserName == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("UserName", "body"))
 	}
 	if body.Email == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("email", "body"))
@@ -230,8 +272,8 @@ func ValidateBbmatchingUserResponse(body *BbmatchingUserResponse) (err error) {
 	if body.PhotoURL == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("photoURL", "body"))
 	}
-	if body.UserName == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("UserName", "body"))
+	if body.EmailVerified == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("email_verified", "body"))
 	}
 	if body.UserID != nil {
 		if utf8.RuneCountInString(*body.UserID) < 28 {

@@ -141,6 +141,32 @@ paths:
       - http
       security:
       - jwt_header_Authorization: []
+  /v1/users/jwt/{user_id}:
+    get:
+      tags:
+      - User
+      summary: Get JWT User
+      description: 指定したユーザーIDのJWTを取得します
+      operationId: User#Get JWT
+      parameters:
+      - name: user_id
+        in: path
+        description: firebaseのユーザーID
+        required: true
+        type: string
+        maxLength: 28
+        minLength: 28
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/UserGet JWTResponseBody'
+        "401":
+          description: Unauthorized response.
+          schema:
+            $ref: '#/definitions/UserGetJWTUnauthorizedResponseBody'
+      schemes:
+      - http
   /v1/users/me:
     get:
       tags:
@@ -186,6 +212,10 @@ definitions:
         description: チームのプライマリメールアドレス
         example: chunichi@example.com
         format: email
+      email_verified:
+        type: boolean
+        description: ユーザーのプライマリメールアドレスが確認されているか。
+        example: false
       phoneNumber:
         type: string
         description: チームのメイン電話番号
@@ -205,15 +235,17 @@ definitions:
     example:
       UserName: Chunichi Dragons
       email: chunichi@example.com
+      email_verified: false
       phoneNumber: "09012345678"
       photoURL: http://img.com
       user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
     required:
     - user_id
+    - UserName
     - email
     - phoneNumber
     - photoURL
-    - UserName
+    - email_verified
   UserBbmatchingUserResponseCollection:
     title: 'Mediatype identifier: application/vnd.bbmatching.user+json; type=collection;
       view=default'
@@ -225,16 +257,13 @@ definitions:
     example:
     - UserName: Chunichi Dragons
       email: chunichi@example.com
+      email_verified: true
       phoneNumber: "09012345678"
       photoURL: http://img.com
       user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
     - UserName: Chunichi Dragons
       email: chunichi@example.com
-      phoneNumber: "09012345678"
-      photoURL: http://img.com
-      user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
-    - UserName: Chunichi Dragons
-      email: chunichi@example.com
+      email_verified: true
       phoneNumber: "09012345678"
       photoURL: http://img.com
       user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
@@ -242,7 +271,7 @@ definitions:
     title: UserDeleteCurrentUserUnauthorizedResponseBody
     type: string
     description: Credentials are invalid
-    example: Animi veniam et.
+    example: Eaque eligendi.
   UserGet Current UserResponseBody:
     title: 'Mediatype identifier: application/vnd.bbmatching.user+json; view=default'
     type: object
@@ -256,6 +285,10 @@ definitions:
         description: チームのプライマリメールアドレス
         example: chunichi@example.com
         format: email
+      email_verified:
+        type: boolean
+        description: ユーザーのプライマリメールアドレスが確認されているか。
+        example: false
       phoneNumber:
         type: string
         description: チームのメイン電話番号
@@ -275,15 +308,28 @@ definitions:
     example:
       UserName: Chunichi Dragons
       email: chunichi@example.com
+      email_verified: true
       phoneNumber: "09012345678"
       photoURL: http://img.com
       user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
     required:
     - user_id
+    - UserName
     - email
     - phoneNumber
     - photoURL
-    - UserName
+    - email_verified
+  UserGet JWTResponseBody:
+    title: 'Mediatype identifier: application/vnd.bbmatching.jwt+json; view=default'
+    type: object
+    properties:
+      JWT:
+        type: string
+        description: Json Web Token
+        example: eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1c2VyaG9nZSIsImF1ZCI6ImF1ZGhvZ2UiLCJpc3MiOiJodHRwczpcL1wvZXhhbXBsZS5jb21cLyIsImV4cCI6MTQ1MjU2NTYyOCwiaWF0IjoxNDUyNTY1NTY4fQ.BfW2a1SMY1a8cjb7ATcJPwYSmB1P6l4oN2QRNtod-xCyochsB1ZurxNLqPOGFr7_Abqpk-_lOUaPOdL2jQ23T1DS1lmQgaEZgUXaJPAqGSJygANpv8ds07Q6pbX_XbFpJdoVCQHzP8MjbjW_ft2ZAAJzjZZEC6Hm0WUxKS6V0yRNmEUyV-Ljh6n337rtAoSTks2APdgW1hffyZMrptKKazG2m0V0LQRnu5lmWLTYwTZC8NdNJZNepPwQiGNZS0IcrdZhguGAL75ZGTMw9O_EC9gv_I_9I5NUwZk6LG1feEy3MawT0QaTEsF5n6yUKJ8ziuMXnUEsymGdKC-VYEbPyw
+    description: Get JWTResponseBody result type (default view)
+    example:
+      JWT: eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ1c2VyaG9nZSIsImF1ZCI6ImF1ZGhvZ2UiLCJpc3MiOiJodHRwczpcL1wvZXhhbXBsZS5jb21cLyIsImV4cCI6MTQ1MjU2NTYyOCwiaWF0IjoxNDUyNTY1NTY4fQ.BfW2a1SMY1a8cjb7ATcJPwYSmB1P6l4oN2QRNtod-xCyochsB1ZurxNLqPOGFr7_Abqpk-_lOUaPOdL2jQ23T1DS1lmQgaEZgUXaJPAqGSJygANpv8ds07Q6pbX_XbFpJdoVCQHzP8MjbjW_ft2ZAAJzjZZEC6Hm0WUxKS6V0yRNmEUyV-Ljh6n337rtAoSTks2APdgW1hffyZMrptKKazG2m0V0LQRnu5lmWLTYwTZC8NdNJZNepPwQiGNZS0IcrdZhguGAL75ZGTMw9O_EC9gv_I_9I5NUwZk6LG1feEy3MawT0QaTEsF5n6yUKJ8ziuMXnUEsymGdKC-VYEbPyw
   UserGet UserResponseBody:
     title: 'Mediatype identifier: application/vnd.bbmatching.user+json; view=default'
     type: object
@@ -297,6 +343,10 @@ definitions:
         description: チームのプライマリメールアドレス
         example: chunichi@example.com
         format: email
+      email_verified:
+        type: boolean
+        description: ユーザーのプライマリメールアドレスが確認されているか。
+        example: true
       phoneNumber:
         type: string
         description: チームのメイン電話番号
@@ -316,30 +366,37 @@ definitions:
     example:
       UserName: Chunichi Dragons
       email: chunichi@example.com
+      email_verified: false
       phoneNumber: "09012345678"
       photoURL: http://img.com
       user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
     required:
     - user_id
+    - UserName
     - email
     - phoneNumber
     - photoURL
-    - UserName
+    - email_verified
   UserGetCurrentUserUnauthorizedResponseBody:
     title: UserGetCurrentUserUnauthorizedResponseBody
     type: string
     description: Credentials are invalid
-    example: Placeat ipsum repudiandae voluptatem.
+    example: Non error omnis aliquid iste earum est.
+  UserGetJWTUnauthorizedResponseBody:
+    title: UserGetJWTUnauthorizedResponseBody
+    type: string
+    description: Credentials are invalid
+    example: Ut saepe aut porro velit est nobis.
   UserGetUserUnauthorizedResponseBody:
     title: UserGetUserUnauthorizedResponseBody
     type: string
     description: Credentials are invalid
-    example: Corporis voluptatum dolore natus.
+    example: Ad non quia illo ut.
   UserListUserUnauthorizedResponseBody:
     title: UserListUserUnauthorizedResponseBody
     type: string
     description: Credentials are invalid
-    example: Ipsum ipsum delectus explicabo eligendi.
+    example: Eos quia saepe.
   UserUpdate Current UserResponseBody:
     title: 'Mediatype identifier: application/vnd.bbmatching.user+json; view=default'
     type: object
@@ -353,6 +410,10 @@ definitions:
         description: チームのプライマリメールアドレス
         example: chunichi@example.com
         format: email
+      email_verified:
+        type: boolean
+        description: ユーザーのプライマリメールアドレスが確認されているか。
+        example: true
       phoneNumber:
         type: string
         description: チームのメイン電話番号
@@ -372,15 +433,17 @@ definitions:
     example:
       UserName: Chunichi Dragons
       email: chunichi@example.com
+      email_verified: true
       phoneNumber: "09012345678"
       photoURL: http://img.com
       user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
     required:
     - user_id
+    - UserName
     - email
     - phoneNumber
     - photoURL
-    - UserName
+    - email_verified
   UserUpdateCurrentUserRequestBody:
     title: UserUpdateCurrentUserRequestBody
     type: object
@@ -412,7 +475,7 @@ definitions:
     title: UserUpdateCurrentUserUnauthorizedResponseBody
     type: string
     description: Credentials are invalid
-    example: Omnis non error omnis aliquid iste earum.
+    example: Quis iusto cumque aperiam.
 securityDefinitions:
   jwt_header_Authorization:
     type: apiKey

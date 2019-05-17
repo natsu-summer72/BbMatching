@@ -21,6 +21,7 @@ type Endpoints struct {
 	ListUser          goa.Endpoint
 	UpdateCurrentUser goa.Endpoint
 	DeleteCurrentUser goa.Endpoint
+	GetJWT            goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "User" service with endpoints.
@@ -33,6 +34,7 @@ func NewEndpoints(s Service) *Endpoints {
 		ListUser:          NewListUserEndpoint(s, a.JWTAuth),
 		UpdateCurrentUser: NewUpdateCurrentUserEndpoint(s, a.JWTAuth),
 		DeleteCurrentUser: NewDeleteCurrentUserEndpoint(s, a.JWTAuth),
+		GetJWT:            NewGetJWTEndpoint(s),
 	}
 }
 
@@ -43,6 +45,7 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.ListUser = m(e.ListUser)
 	e.UpdateCurrentUser = m(e.UpdateCurrentUser)
 	e.DeleteCurrentUser = m(e.DeleteCurrentUser)
+	e.GetJWT = m(e.GetJWT)
 }
 
 // NewGetCurrentUserEndpoint returns an endpoint function that calls the method
@@ -177,5 +180,19 @@ func NewDeleteCurrentUserEndpoint(s Service, authJWTFn security.AuthJWTFunc) goa
 			return nil, err
 		}
 		return nil, s.DeleteCurrentUser(ctx, p)
+	}
+}
+
+// NewGetJWTEndpoint returns an endpoint function that calls the method "Get
+// JWT" of service "User".
+func NewGetJWTEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*GetJWTPayload)
+		res, err := s.GetJWT(ctx, p)
+		if err != nil {
+			return nil, err
+		}
+		vres := NewViewedBbmatchingJWT(res, "default")
+		return vres, nil
 	}
 }

@@ -19,6 +19,12 @@ var SessionTokenPayload = Type("SessionTokenPayload", func(){
 })
 
 
+var GetJWTPayload = Type("GetJWTPayload", func(){
+	Reference(UserProfile)
+	Attribute("user_id")
+	Required("user_id")
+})
+
 // User
 var UserProfile = Type("UserProfile", func(){
 	Attribute("user_id", String, func(){
@@ -44,6 +50,9 @@ var UserProfile = Type("UserProfile", func(){
 	Attribute("UserName",func(){
 		Description("チームの表示名")
 		Example("Chunichi Dragons")
+	})
+	Attribute("email_verified", Boolean, func(){
+		Description("ユーザーのプライマリメールアドレスが確認されているか。")
 	})
 })
 

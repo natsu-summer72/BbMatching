@@ -24,6 +24,7 @@ type Server struct {
 	ListUser          http.Handler
 	UpdateCurrentUser http.Handler
 	DeleteCurrentUser http.Handler
+	GetJWT            http.Handler
 }
 
 // ErrorNamer is an interface implemented by generated error structs that
@@ -58,12 +59,14 @@ func New(
 			{"ListUser", "GET", "/v1/users"},
 			{"UpdateCurrentUser", "PUT", "/v1/users"},
 			{"DeleteCurrentUser", "DELETE", "/v1/users"},
+			{"GetJWT", "GET", "/v1/users/jwt/{user_id}"},
 		},
 		GetCurrentUser:    NewGetCurrentUserHandler(e.GetCurrentUser, mux, dec, enc, eh),
 		GetUser:           NewGetUserHandler(e.GetUser, mux, dec, enc, eh),
 		ListUser:          NewListUserHandler(e.ListUser, mux, dec, enc, eh),
 		UpdateCurrentUser: NewUpdateCurrentUserHandler(e.UpdateCurrentUser, mux, dec, enc, eh),
 		DeleteCurrentUser: NewDeleteCurrentUserHandler(e.DeleteCurrentUser, mux, dec, enc, eh),
+		GetJWT:            NewGetJWTHandler(e.GetJWT, mux, dec, enc, eh),
 	}
 }
 
@@ -77,6 +80,7 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.ListUser = m(s.ListUser)
 	s.UpdateCurrentUser = m(s.UpdateCurrentUser)
 	s.DeleteCurrentUser = m(s.DeleteCurrentUser)
+	s.GetJWT = m(s.GetJWT)
 }
 
 // Mount configures the mux to serve the User endpoints.
@@ -86,6 +90,7 @@ func Mount(mux goahttp.Muxer, h *Server) {
 	MountListUserHandler(mux, h.ListUser)
 	MountUpdateCurrentUserHandler(mux, h.UpdateCurrentUser)
 	MountDeleteCurrentUserHandler(mux, h.DeleteCurrentUser)
+	MountGetJWTHandler(mux, h.GetJWT)
 }
 
 // MountGetCurrentUserHandler configures the mux to serve the "User" service
@@ -325,6 +330,58 @@ func NewDeleteCurrentUserHandler(
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
 		ctx = context.WithValue(ctx, goa.MethodKey, "Delete current user")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "User")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				eh(ctx, w, err)
+			}
+			return
+		}
+
+		res, err := endpoint(ctx, payload)
+
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				eh(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			eh(ctx, w, err)
+		}
+	})
+}
+
+// MountGetJWTHandler configures the mux to serve the "User" service "Get JWT"
+// endpoint.
+func MountGetJWTHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := h.(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("GET", "/v1/users/jwt/{user_id}", f)
+}
+
+// NewGetJWTHandler creates a HTTP handler which loads the HTTP request and
+// calls the "User" service "Get JWT" endpoint.
+func NewGetJWTHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	dec func(*http.Request) goahttp.Decoder,
+	enc func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	eh func(context.Context, http.ResponseWriter, error),
+) http.Handler {
+	var (
+		decodeRequest  = DecodeGetJWTRequest(mux, dec)
+		encodeResponse = EncodeGetJWTResponse(enc)
+		encodeError    = EncodeGetJWTError(enc)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "Get JWT")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "User")
 		payload, err := decodeRequest(r)
 		if err != nil {

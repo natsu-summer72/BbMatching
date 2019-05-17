@@ -72,5 +72,18 @@ var _ = Service("User",func(){
 			Response(StatusNoContent)
 		})
 	})
+
+	Method("Get JWT", func(){
+		Description("指定したユーザーIDのJWTを取得します")
+		NoSecurity()
+
+		Payload(GetJWTPayload)
+		Result(JWTResponse)
+
+		HTTP(func(){
+			GET("/users/jwt/{user_id}")
+			Response(StatusOK)
+		})
+	})
 })
 

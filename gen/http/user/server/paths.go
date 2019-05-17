@@ -35,3 +35,8 @@ func UpdateCurrentUserUserPath() string {
 func DeleteCurrentUserUserPath() string {
 	return "/v1/users"
 }
+
+// GetJWTUserPath returns the URL path to the User service Get JWT HTTP endpoint.
+func GetJWTUserPath(userID string) string {
+	return fmt.Sprintf("/v1/users/jwt/%v", userID)
+}

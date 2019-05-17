@@ -442,3 +442,83 @@ func DecodeDeleteCurrentUserResponse(decoder func(*http.Response) goahttp.Decode
 		}
 	}
 }
+
+// BuildGetJWTRequest instantiates a HTTP request object with method and path
+// set to call the "User" service "Get JWT" endpoint
+func (c *Client) BuildGetJWTRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		userID string
+	)
+	{
+		p, ok := v.(*user.GetJWTPayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("User", "Get JWT", "*user.GetJWTPayload", v)
+		}
+		userID = p.UserID
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetJWTUserPath(userID)}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("User", "Get JWT", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// DecodeGetJWTResponse returns a decoder for responses returned by the User
+// Get JWT endpoint. restoreBody controls whether the response body should be
+// restored after having been read.
+// DecodeGetJWTResponse may return the following errors:
+//	- "unauthorized" (type user.Unauthorized): http.StatusUnauthorized
+//	- error: internal error
+func DecodeGetJWTResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body GetJWTResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("User", "Get JWT", err)
+			}
+			p := NewGetJWTBbmatchingJWTOK(&body)
+			view := "default"
+			vres := &userviews.BbmatchingJWT{p, view}
+			if err = userviews.ValidateBbmatchingJWT(vres); err != nil {
+				return nil, goahttp.ErrValidationError("User", "Get JWT", err)
+			}
+			res := user.NewBbmatchingJWT(vres)
+			return res, nil
+		case http.StatusUnauthorized:
+			var (
+				body GetJWTUnauthorizedResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("User", "Get JWT", err)
+			}
+			return nil, NewGetJWTUnauthorized(body)
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("User", "Get JWT", resp.StatusCode, string(body))
+		}
+	}
+}

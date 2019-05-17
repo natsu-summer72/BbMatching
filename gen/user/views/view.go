@@ -30,23 +30,39 @@ type BbmatchingUserCollection struct {
 	View string
 }
 
+// BbmatchingJWT is the viewed result type that is projected based on a view.
+type BbmatchingJWT struct {
+	// Type to project
+	Projected *BbmatchingJWTView
+	// View to render
+	View string
+}
+
 // BbmatchingUserView is a type that runs validations on a projected type.
 type BbmatchingUserView struct {
 	// firebaseのユーザーID
 	UserID *string
+	// チームの表示名
+	UserName *string
 	// チームのプライマリメールアドレス
 	Email *string
 	// チームのメイン電話番号
 	PhoneNumber *string
 	// チームの写真URL
 	PhotoURL *string
-	// チームの表示名
-	UserName *string
+	// ユーザーのプライマリメールアドレスが確認されているか。
+	EmailVerified *bool
 }
 
 // BbmatchingUserCollectionView is a type that runs validations on a projected
 // type.
 type BbmatchingUserCollectionView []*BbmatchingUserView
+
+// BbmatchingJWTView is a type that runs validations on a projected type.
+type BbmatchingJWTView struct {
+	// Json Web Token
+	JWT *string
+}
 
 var (
 	// BbmatchingUserMap is a map of attribute names in result type BbmatchingUser
@@ -58,6 +74,7 @@ var (
 			"phoneNumber",
 			"photoURL",
 			"UserName",
+			"email_verified",
 		},
 		"tiny": []string{
 			"UserName",
@@ -74,11 +91,19 @@ var (
 			"phoneNumber",
 			"photoURL",
 			"UserName",
+			"email_verified",
 		},
 		"tiny": []string{
 			"UserName",
 			"email",
 			"photoURL",
+		},
+	}
+	// BbmatchingJWTMap is a map of attribute names in result type BbmatchingJWT
+	// indexed by view name.
+	BbmatchingJWTMap = map[string][]string{
+		"default": []string{
+			"JWT",
 		},
 	}
 )
@@ -111,11 +136,26 @@ func ValidateBbmatchingUserCollection(result BbmatchingUserCollection) (err erro
 	return
 }
 
+// ValidateBbmatchingJWT runs the validations defined on the viewed result type
+// BbmatchingJWT.
+func ValidateBbmatchingJWT(result *BbmatchingJWT) (err error) {
+	switch result.View {
+	case "default", "":
+		err = ValidateBbmatchingJWTView(result.Projected)
+	default:
+		err = goa.InvalidEnumValueError("view", result.View, []interface{}{"default"})
+	}
+	return
+}
+
 // ValidateBbmatchingUserView runs the validations defined on
 // BbmatchingUserView using the "default" view.
 func ValidateBbmatchingUserView(result *BbmatchingUserView) (err error) {
 	if result.UserID == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("user_id", "result"))
+	}
+	if result.UserName == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("UserName", "result"))
 	}
 	if result.Email == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("email", "result"))
@@ -126,8 +166,8 @@ func ValidateBbmatchingUserView(result *BbmatchingUserView) (err error) {
 	if result.PhotoURL == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("photoURL", "result"))
 	}
-	if result.UserName == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("UserName", "result"))
+	if result.EmailVerified == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("email_verified", "result"))
 	}
 	if result.UserID != nil {
 		if utf8.RuneCountInString(*result.UserID) < 28 {
@@ -151,14 +191,14 @@ func ValidateBbmatchingUserView(result *BbmatchingUserView) (err error) {
 // ValidateBbmatchingUserViewTiny runs the validations defined on
 // BbmatchingUserView using the "tiny" view.
 func ValidateBbmatchingUserViewTiny(result *BbmatchingUserView) (err error) {
+	if result.UserName == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("UserName", "result"))
+	}
 	if result.Email == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("email", "result"))
 	}
 	if result.PhotoURL == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("photoURL", "result"))
-	}
-	if result.UserName == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("UserName", "result"))
 	}
 	if result.Email != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("result.email", *result.Email, goa.FormatEmail))
@@ -185,5 +225,12 @@ func ValidateBbmatchingUserCollectionViewTiny(result BbmatchingUserCollectionVie
 			err = goa.MergeErrors(err, err2)
 		}
 	}
+	return
+}
+
+// ValidateBbmatchingJWTView runs the validations defined on BbmatchingJWTView
+// using the "default" view.
+func ValidateBbmatchingJWTView(result *BbmatchingJWTView) (err error) {
+
 	return
 }

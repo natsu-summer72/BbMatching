@@ -7,6 +7,7 @@ import (
 	"flag"
 	"fmt"
 	"google.golang.org/api/option"
+	"github.com/joho/godotenv"
 	"log"
 	"net/url"
 	"os"
@@ -30,19 +31,19 @@ func main() {
 	)
 	flag.Parse()
 
+	// load env
+	if err := godotenv.Load(".env"); err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	var wg sync.WaitGroup
 	ctx, cancel := context.WithCancel(context.Background())
-	opt := option.WithCredentialsFile("firebaseAccountKey.json")
+	opt := option.WithCredentialsFile(os.Getenv("FIREBASE_CREDENTIALS"))
 	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
 		log.Fatalf("error initializing app: %v\n", err)
 	}
 
-	// Get an auth client from the firebase.App
-	client, err := app.Auth(ctx)
-	if err != nil {
-		log.Fatalf("error getting Auth client: %v\n", err)
-	}
 
 	// Setup logger. Replace logger with your own log package of choice.
 	var (
@@ -51,6 +52,11 @@ func main() {
 	)
 	{
 		logger = log.New(os.Stderr, "[bbm] ", log.Ltime)
+		// Get an auth client from the firebase.App
+		client, err := app.Auth(ctx)
+		if err != nil {
+			log.Fatalf("error getting Auth client: %v\n", err)
+		}
 		authClient = client
 	}
 

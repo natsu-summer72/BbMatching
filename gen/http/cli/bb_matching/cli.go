@@ -23,7 +23,7 @@ import (
 //    command (subcommand1|subcommand2|...)
 //
 func UsageCommands() string {
-	return `user (get current user|get -user|list -user|update current user|delete current user)
+	return `user (get current user|get -user|list -user|update current user|delete current user|get jwt)
 `
 }
 
@@ -61,6 +61,9 @@ func ParseEndpoint(
 
 		userDeleteCurrentUserFlags     = flag.NewFlagSet("delete current user", flag.ExitOnError)
 		userDeleteCurrentUserTokenFlag = userDeleteCurrentUserFlags.String("token", "", "")
+
+		userGetJWTFlags      = flag.NewFlagSet("get jwt", flag.ExitOnError)
+		userGetJWTUserIDFlag = userGetJWTFlags.String("userid", "REQUIRED", "firebaseのユーザーID")
 	)
 	userFlags.Usage = userUsage
 	userGetCurrentUserFlags.Usage = userGetCurrentUserUsage
@@ -68,6 +71,7 @@ func ParseEndpoint(
 	userListUserFlags.Usage = userListUserUsage
 	userUpdateCurrentUserFlags.Usage = userUpdateCurrentUserUsage
 	userDeleteCurrentUserFlags.Usage = userDeleteCurrentUserUsage
+	userGetJWTFlags.Usage = userGetJWTUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -118,6 +122,9 @@ func ParseEndpoint(
 			case "delete current user":
 				epf = userDeleteCurrentUserFlags
 
+			case "get jwt":
+				epf = userGetJWTFlags
+
 			}
 
 		}
@@ -158,6 +165,9 @@ func ParseEndpoint(
 			case "delete current user":
 				endpoint = c.DeleteCurrentUser()
 				data, err = userc.BuildDeleteCurrentUserPayload(*userDeleteCurrentUserTokenFlag)
+			case "get jwt":
+				endpoint = c.GetJWT()
+				data, err = userc.BuildGetJWTPayload(*userGetJWTUserIDFlag)
 			}
 		}
 	}
@@ -180,6 +190,7 @@ COMMAND:
     list -user: ユーザーの一覧を取得します。
     update current user: 現在のセッションに紐づくユーザーの情報を更新します。
     delete current user: 現在のセッションに紐づくユーザーを削除します。
+    get jwt: 指定したユーザーIDのJWTを取得します
 
 Additional help:
     %s user COMMAND --help
@@ -244,5 +255,16 @@ func userDeleteCurrentUserUsage() {
 
 Example:
     `+os.Args[0]+` user delete current user --token "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ"
+`, os.Args[0])
+}
+
+func userGetJWTUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] user get jwt -userid STRING
+
+指定したユーザーIDのJWTを取得します
+    -userid STRING: firebaseのユーザーID
+
+Example:
+    `+os.Args[0]+` user get jwt --userid "XRQ85mtXnINISH25zfM0m5RlC6L2"
 `, os.Args[0])
 }

@@ -41,6 +41,8 @@ type GetCurrentUserResponseBody struct {
 	PhotoURL string `form:"photoURL" json:"photoURL" xml:"photoURL"`
 	// チームの表示名
 	UserName string `form:"UserName" json:"UserName" xml:"UserName"`
+	// ユーザーのプライマリメールアドレスが確認されているか。
+	EmailVerified bool `form:"email_verified" json:"email_verified" xml:"email_verified"`
 }
 
 // GetCurrentUserResponseBodyTiny is the type of the "User" service "Get
@@ -67,6 +69,8 @@ type GetUserResponseBody struct {
 	PhotoURL string `form:"photoURL" json:"photoURL" xml:"photoURL"`
 	// チームの表示名
 	UserName string `form:"UserName" json:"UserName" xml:"UserName"`
+	// ユーザーのプライマリメールアドレスが確認されているか。
+	EmailVerified bool `form:"email_verified" json:"email_verified" xml:"email_verified"`
 }
 
 // GetUserResponseBodyTiny is the type of the "User" service "Get User"
@@ -101,6 +105,8 @@ type UpdateCurrentUserResponseBody struct {
 	PhotoURL string `form:"photoURL" json:"photoURL" xml:"photoURL"`
 	// チームの表示名
 	UserName string `form:"UserName" json:"UserName" xml:"UserName"`
+	// ユーザーのプライマリメールアドレスが確認されているか。
+	EmailVerified bool `form:"email_verified" json:"email_verified" xml:"email_verified"`
 }
 
 // UpdateCurrentUserResponseBodyTiny is the type of the "User" service "Update
@@ -112,6 +118,13 @@ type UpdateCurrentUserResponseBodyTiny struct {
 	Email string `form:"email" json:"email" xml:"email"`
 	// チームの写真URL
 	PhotoURL string `form:"photoURL" json:"photoURL" xml:"photoURL"`
+}
+
+// GetJWTResponseBody is the type of the "User" service "Get JWT" endpoint HTTP
+// response body.
+type GetJWTResponseBody struct {
+	// Json Web Token
+	JWT *string `form:"JWT,omitempty" json:"JWT,omitempty" xml:"JWT,omitempty"`
 }
 
 // GetCurrentUserUnauthorizedResponseBody is the type of the "User" service
@@ -136,6 +149,10 @@ type UpdateCurrentUserUnauthorizedResponseBody string
 // error.
 type DeleteCurrentUserUnauthorizedResponseBody string
 
+// GetJWTUnauthorizedResponseBody is the type of the "User" service "Get JWT"
+// endpoint HTTP response body for the "unauthorized" error.
+type GetJWTUnauthorizedResponseBody string
+
 // BbmatchingUserResponse is used to define fields on response body types.
 type BbmatchingUserResponse struct {
 	// firebaseのユーザーID
@@ -148,6 +165,8 @@ type BbmatchingUserResponse struct {
 	PhotoURL string `form:"photoURL" json:"photoURL" xml:"photoURL"`
 	// チームの表示名
 	UserName string `form:"UserName" json:"UserName" xml:"UserName"`
+	// ユーザーのプライマリメールアドレスが確認されているか。
+	EmailVerified bool `form:"email_verified" json:"email_verified" xml:"email_verified"`
 }
 
 // BbmatchingUserResponseTiny is used to define fields on response body types.
@@ -164,11 +183,12 @@ type BbmatchingUserResponseTiny struct {
 // of the "Get current user" endpoint of the "User" service.
 func NewGetCurrentUserResponseBody(res *userviews.BbmatchingUserView) *GetCurrentUserResponseBody {
 	body := &GetCurrentUserResponseBody{
-		UserID:      *res.UserID,
-		Email:       *res.Email,
-		PhoneNumber: *res.PhoneNumber,
-		PhotoURL:    *res.PhotoURL,
-		UserName:    *res.UserName,
+		UserID:        *res.UserID,
+		UserName:      *res.UserName,
+		Email:         *res.Email,
+		PhoneNumber:   *res.PhoneNumber,
+		PhotoURL:      *res.PhotoURL,
+		EmailVerified: *res.EmailVerified,
 	}
 	return body
 }
@@ -177,9 +197,9 @@ func NewGetCurrentUserResponseBody(res *userviews.BbmatchingUserView) *GetCurren
 // result of the "Get current user" endpoint of the "User" service.
 func NewGetCurrentUserResponseBodyTiny(res *userviews.BbmatchingUserView) *GetCurrentUserResponseBodyTiny {
 	body := &GetCurrentUserResponseBodyTiny{
+		UserName: *res.UserName,
 		Email:    *res.Email,
 		PhotoURL: *res.PhotoURL,
-		UserName: *res.UserName,
 	}
 	return body
 }
@@ -188,11 +208,12 @@ func NewGetCurrentUserResponseBodyTiny(res *userviews.BbmatchingUserView) *GetCu
 // "Get User" endpoint of the "User" service.
 func NewGetUserResponseBody(res *userviews.BbmatchingUserView) *GetUserResponseBody {
 	body := &GetUserResponseBody{
-		UserID:      *res.UserID,
-		Email:       *res.Email,
-		PhoneNumber: *res.PhoneNumber,
-		PhotoURL:    *res.PhotoURL,
-		UserName:    *res.UserName,
+		UserID:        *res.UserID,
+		UserName:      *res.UserName,
+		Email:         *res.Email,
+		PhoneNumber:   *res.PhoneNumber,
+		PhotoURL:      *res.PhotoURL,
+		EmailVerified: *res.EmailVerified,
 	}
 	return body
 }
@@ -201,9 +222,9 @@ func NewGetUserResponseBody(res *userviews.BbmatchingUserView) *GetUserResponseB
 // the "Get User" endpoint of the "User" service.
 func NewGetUserResponseBodyTiny(res *userviews.BbmatchingUserView) *GetUserResponseBodyTiny {
 	body := &GetUserResponseBodyTiny{
+		UserName: *res.UserName,
 		Email:    *res.Email,
 		PhotoURL: *res.PhotoURL,
-		UserName: *res.UserName,
 	}
 	return body
 }
@@ -214,11 +235,12 @@ func NewBbmatchingUserResponseCollection(res userviews.BbmatchingUserCollectionV
 	body := make([]*BbmatchingUserResponse, len(res))
 	for i, val := range res {
 		body[i] = &BbmatchingUserResponse{
-			UserID:      *val.UserID,
-			Email:       *val.Email,
-			PhoneNumber: *val.PhoneNumber,
-			PhotoURL:    *val.PhotoURL,
-			UserName:    *val.UserName,
+			UserID:        *val.UserID,
+			UserName:      *val.UserName,
+			Email:         *val.Email,
+			PhoneNumber:   *val.PhoneNumber,
+			PhotoURL:      *val.PhotoURL,
+			EmailVerified: *val.EmailVerified,
 		}
 	}
 	return body
@@ -230,9 +252,9 @@ func NewBbmatchingUserResponseTinyCollection(res userviews.BbmatchingUserCollect
 	body := make([]*BbmatchingUserResponseTiny, len(res))
 	for i, val := range res {
 		body[i] = &BbmatchingUserResponseTiny{
+			UserName: *val.UserName,
 			Email:    *val.Email,
 			PhotoURL: *val.PhotoURL,
-			UserName: *val.UserName,
 		}
 	}
 	return body
@@ -242,11 +264,12 @@ func NewBbmatchingUserResponseTinyCollection(res userviews.BbmatchingUserCollect
 // result of the "Update current user" endpoint of the "User" service.
 func NewUpdateCurrentUserResponseBody(res *userviews.BbmatchingUserView) *UpdateCurrentUserResponseBody {
 	body := &UpdateCurrentUserResponseBody{
-		UserID:      *res.UserID,
-		Email:       *res.Email,
-		PhoneNumber: *res.PhoneNumber,
-		PhotoURL:    *res.PhotoURL,
-		UserName:    *res.UserName,
+		UserID:        *res.UserID,
+		UserName:      *res.UserName,
+		Email:         *res.Email,
+		PhoneNumber:   *res.PhoneNumber,
+		PhotoURL:      *res.PhotoURL,
+		EmailVerified: *res.EmailVerified,
 	}
 	return body
 }
@@ -255,9 +278,18 @@ func NewUpdateCurrentUserResponseBody(res *userviews.BbmatchingUserView) *Update
 // result of the "Update current user" endpoint of the "User" service.
 func NewUpdateCurrentUserResponseBodyTiny(res *userviews.BbmatchingUserView) *UpdateCurrentUserResponseBodyTiny {
 	body := &UpdateCurrentUserResponseBodyTiny{
+		UserName: *res.UserName,
 		Email:    *res.Email,
 		PhotoURL: *res.PhotoURL,
-		UserName: *res.UserName,
+	}
+	return body
+}
+
+// NewGetJWTResponseBody builds the HTTP response body from the result of the
+// "Get JWT" endpoint of the "User" service.
+func NewGetJWTResponseBody(res *userviews.BbmatchingJWTView) *GetJWTResponseBody {
+	body := &GetJWTResponseBody{
+		JWT: res.JWT,
 	}
 	return body
 }
@@ -294,6 +326,13 @@ func NewUpdateCurrentUserUnauthorizedResponseBody(res user.Unauthorized) UpdateC
 // from the result of the "Delete current user" endpoint of the "User" service.
 func NewDeleteCurrentUserUnauthorizedResponseBody(res user.Unauthorized) DeleteCurrentUserUnauthorizedResponseBody {
 	body := DeleteCurrentUserUnauthorizedResponseBody(res)
+	return body
+}
+
+// NewGetJWTUnauthorizedResponseBody builds the HTTP response body from the
+// result of the "Get JWT" endpoint of the "User" service.
+func NewGetJWTUnauthorizedResponseBody(res user.Unauthorized) GetJWTUnauthorizedResponseBody {
+	body := GetJWTUnauthorizedResponseBody(res)
 	return body
 }
 
@@ -339,6 +378,13 @@ func NewUpdateCurrentUserUpdateUserPayload(body *UpdateCurrentUserRequestBody, t
 func NewDeleteCurrentUserSessionTokenPayload(token *string) *user.SessionTokenPayload {
 	return &user.SessionTokenPayload{
 		Token: token,
+	}
+}
+
+// NewGetJWTPayload builds a User service Get JWT endpoint payload.
+func NewGetJWTPayload(userID string) *user.GetJWTPayload {
+	return &user.GetJWTPayload{
+		UserID: userID,
 	}
 }
 

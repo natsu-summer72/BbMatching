@@ -37,6 +37,9 @@ type Client struct {
 	// Delete current user endpoint.
 	DeleteCurrentUserDoer goahttp.Doer
 
+	// GetJWT Doer is the HTTP client used to make requests to the Get JWT endpoint.
+	GetJWTDoer goahttp.Doer
+
 	// RestoreResponseBody controls whether the response bodies are reset after
 	// decoding so they can be read again.
 	RestoreResponseBody bool
@@ -62,6 +65,7 @@ func NewClient(
 		ListUserDoer:          doer,
 		UpdateCurrentUserDoer: doer,
 		DeleteCurrentUserDoer: doer,
+		GetJWTDoer:            doer,
 		RestoreResponseBody:   restoreBody,
 		scheme:                scheme,
 		host:                  host,
@@ -190,6 +194,26 @@ func (c *Client) DeleteCurrentUser() goa.Endpoint {
 
 		if err != nil {
 			return nil, goahttp.ErrRequestError("User", "Delete current user", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// GetJWT returns an endpoint that makes HTTP requests to the User service Get
+// JWT server.
+func (c *Client) GetJWT() goa.Endpoint {
+	var (
+		decodeResponse = DecodeGetJWTResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildGetJWTRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.GetJWTDoer.Do(req)
+
+		if err != nil {
+			return nil, goahttp.ErrRequestError("User", "Get JWT", err)
 		}
 		return decodeResponse(resp)
 	}

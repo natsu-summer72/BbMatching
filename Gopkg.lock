@@ -96,6 +96,14 @@
   version = "v0.5.1"
 
 [[projects]]
+  digest = "1:ecd9aa82687cf31d1585d4ac61d0ba180e42e8a6182b85bd785fcca8dfeefc1b"
+  name = "github.com/joho/godotenv"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "23d116af351c84513e1946b527c88823e476be13"
+  version = "v1.3.0"
+
+[[projects]]
   branch = "master"
   digest = "1:393f23e872c9141dbe315c428dc3eac9406f029be7ab0e1cae2374486c07aa54"
   name = "github.com/manveru/faker"
@@ -333,12 +341,14 @@
   input-imports = [
     "firebase.google.com/go",
     "firebase.google.com/go/auth",
+    "github.com/joho/godotenv",
     "goa.design/goa",
     "goa.design/goa/dsl",
     "goa.design/goa/http",
     "goa.design/goa/http/middleware",
     "goa.design/goa/middleware",
     "goa.design/goa/security",
+    "google.golang.org/api/iterator",
     "google.golang.org/api/option",
   ]
   solver-name = "gps-cdcl"

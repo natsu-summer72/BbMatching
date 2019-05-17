@@ -20,16 +20,18 @@ type Client struct {
 	ListUserEndpoint          goa.Endpoint
 	UpdateCurrentUserEndpoint goa.Endpoint
 	DeleteCurrentUserEndpoint goa.Endpoint
+	GetJWTEndpoint            goa.Endpoint
 }
 
 // NewClient initializes a "User" service client given the endpoints.
-func NewClient(getCurrentUser, getUser, listUser, updateCurrentUser, deleteCurrentUser goa.Endpoint) *Client {
+func NewClient(getCurrentUser, getUser, listUser, updateCurrentUser, deleteCurrentUser, getJWT goa.Endpoint) *Client {
 	return &Client{
 		GetCurrentUserEndpoint:    getCurrentUser,
 		GetUserEndpoint:           getUser,
 		ListUserEndpoint:          listUser,
 		UpdateCurrentUserEndpoint: updateCurrentUser,
 		DeleteCurrentUserEndpoint: deleteCurrentUser,
+		GetJWTEndpoint:            getJWT,
 	}
 }
 
@@ -79,4 +81,14 @@ func (c *Client) UpdateCurrentUser(ctx context.Context, p *UpdateUserPayload) (r
 func (c *Client) DeleteCurrentUser(ctx context.Context, p *SessionTokenPayload) (err error) {
 	_, err = c.DeleteCurrentUserEndpoint(ctx, p)
 	return
+}
+
+// GetJWT calls the "Get JWT" endpoint of the "User" service.
+func (c *Client) GetJWT(ctx context.Context, p *GetJWTPayload) (res *BbmatchingJWT, err error) {
+	var ires interface{}
+	ires, err = c.GetJWTEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*BbmatchingJWT), nil
 }

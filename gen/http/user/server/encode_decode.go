@@ -372,3 +372,64 @@ func EncodeDeleteCurrentUserError(encoder func(context.Context, http.ResponseWri
 		}
 	}
 }
+
+// EncodeGetJWTResponse returns an encoder for responses returned by the User
+// Get JWT endpoint.
+func EncodeGetJWTResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res := v.(*userviews.BbmatchingJWT)
+		enc := encoder(ctx, w)
+		body := NewGetJWTResponseBody(res.Projected)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeGetJWTRequest returns a decoder for requests sent to the User Get JWT
+// endpoint.
+func DecodeGetJWTRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			userID string
+			err    error
+
+			params = mux.Vars(r)
+		)
+		userID = params["user_id"]
+		if utf8.RuneCountInString(userID) < 28 {
+			err = goa.MergeErrors(err, goa.InvalidLengthError("userID", userID, utf8.RuneCountInString(userID), 28, true))
+		}
+		if utf8.RuneCountInString(userID) > 28 {
+			err = goa.MergeErrors(err, goa.InvalidLengthError("userID", userID, utf8.RuneCountInString(userID), 28, false))
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewGetJWTPayload(userID)
+
+		return payload, nil
+	}
+}
+
+// EncodeGetJWTError returns an encoder for errors returned by the Get JWT User
+// endpoint.
+func EncodeGetJWTError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		en, ok := v.(ErrorNamer)
+		if !ok {
+			return encodeError(ctx, w, v)
+		}
+		switch en.ErrorName() {
+		case "unauthorized":
+			res := v.(user.Unauthorized)
+			enc := encoder(ctx, w)
+			body := NewGetJWTUnauthorizedResponseBody(res)
+			w.Header().Set("goa-error", "unauthorized")
+			w.WriteHeader(http.StatusUnauthorized)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}
