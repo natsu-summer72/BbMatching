@@ -54,6 +54,14 @@
   version = "5.0.2"
 
 [[projects]]
+  digest = "1:ec6f9bf5e274c833c911923c9193867f3f18788c461f76f05f62bb1510e0ae65"
+  name = "github.com/go-sql-driver/mysql"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "72cd26f257d44c1114970e19afddcd812016007e"
+  version = "v1.4.1"
+
+[[projects]]
   digest = "1:1d3ad0f6a57c08e2168089a64c34313930571fcbe5359d71c608a97ce504f7ca"
   name = "github.com/golang/protobuf"
   packages = [
@@ -257,10 +265,11 @@
   version = "v0.5.0"
 
 [[projects]]
-  digest = "1:15b86ee56687b2b842431678dacd1050900cd5ea24a47fa908ac32ce540664b7"
+  digest = "1:9265d12c2ead1baca4d1c9843d2f4eb1f2b28d6941bc6276ac8f0f2d9e683f17"
   name = "google.golang.org/appengine"
   packages = [
     ".",
+    "cloudsql",
     "internal",
     "internal/app_identity",
     "internal/base",
@@ -341,6 +350,7 @@
   input-imports = [
     "firebase.google.com/go",
     "firebase.google.com/go/auth",
+    "github.com/go-sql-driver/mysql",
     "github.com/joho/godotenv",
     "goa.design/goa",
     "goa.design/goa/dsl",

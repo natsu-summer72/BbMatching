@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
 	"flag"
 	"fmt"
 	"google.golang.org/api/option"
 	"github.com/joho/godotenv"
+	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"net/url"
 	"os"
@@ -36,6 +38,13 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
+	host := os.Getenv("MYSQL_USER") + ":" + os.Getenv("MYSQL_PASSWORD") + "@(" + os.Getenv("MYSQL_HOST") + ":"+ os.Getenv("MYSQL_PORT") +")" + "/" + os.Getenv("MYSQL_DATABASE")
+	db, err := sql.Open("mysql", host)
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+
 	var wg sync.WaitGroup
 	ctx, cancel := context.WithCancel(context.Background())
 	opt := option.WithCredentialsFile(os.Getenv("FIREBASE_CREDENTIALS"))
@@ -49,6 +58,7 @@ func main() {
 	var (
 		logger *log.Logger
 		authClient *auth.Client
+		Database *sql.DB
 	)
 	{
 		logger = log.New(os.Stderr, "[bbm] ", log.Ltime)
@@ -58,7 +68,37 @@ func main() {
 			log.Fatalf("error getting Auth client: %v\n", err)
 		}
 		authClient = client
+		Database = db
 	}
+
+
+
+	// Databaseのテスト(MatchAPIを実装したら消す)
+	type Recruit struct {
+		id int64
+		user_id string
+		location string
+		date string
+		comment string
+		disabled bool
+		created_at string
+	}
+
+
+	rows, err := Database.Query("SELECT * from match_recruit")
+	defer rows.Close()
+	if err!=nil{
+		panic(err.Error())
+	}
+	for rows.Next() {
+		recruit:=Recruit{}
+		err = rows.Scan(&recruit.id, &recruit.user_id, &recruit.location, &recruit.date, &recruit.comment, &recruit.disabled, &recruit.created_at)
+		if err != nil {
+			panic(err.Error())
+		}
+		println(recruit.location)
+	}
+
 
 	// Initialize the services.
 	var (
