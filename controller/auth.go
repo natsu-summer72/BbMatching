@@ -2,7 +2,6 @@ package bbm
 
 import (
 	"context"
-	"fmt"
 	"github.com/natsu-summer72/BbMatching/gen/match_recruit"
 	"github.com/natsu-summer72/BbMatching/gen/user"
 	"log"
@@ -22,7 +21,7 @@ func (s *matchRecruitsrvc) JWTAuth(ctx context.Context, token string, scheme *se
 	}
 
 	log.Printf("Verified ID Token: %v\n", verifiedToken)
-	return ctx, fmt.Errorf("not implemented")
+	return ctx, nil
 }
 
 
