@@ -27,4 +27,16 @@ var _ = Service("MatchRecruit", func(){
 		})
 	})
 
+	Method("Get Match Recruit", func(){
+		Description("指定したIDの募集試合を取得")
+
+		Payload(GetMatchRecruitPayload)
+		Result(MatchRecruitResponse)
+
+		HTTP(func(){
+			GET("/match/{id}")
+			Response(StatusOK)
+		})
+	})
+
 })

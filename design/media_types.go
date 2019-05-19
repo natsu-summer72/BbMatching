@@ -55,12 +55,13 @@ var MatchRecruitResponse = ResultType("application/vnd.bbmatching.match_recruit+
 
 	Reference(MatchRecruitProfile)
 	Attributes(func(){
+		Attribute("id")
 		Attribute("user_id")
 		Attribute("location")
 		Attribute("date")
 		Attribute("comment")
 		Attribute("disabled")
-		Required("user_id", "location", "date", "comment", "disabled")
+		Required("id", "user_id", "location", "date", "comment", "disabled")
 	})
 
 	View("default", func(){

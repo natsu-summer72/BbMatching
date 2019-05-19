@@ -13,6 +13,71 @@ produces:
 - application/xml
 - application/gob
 paths:
+  /v1/match_recruit/match:
+    get:
+      tags:
+      - MatchRecruit
+      summary: List Match Recruitment MatchRecruit
+      description: |
+        募集中である試合の一覧を返します。
+
+        Required security scopes:
+      operationId: MatchRecruit#List Match Recruitment
+      parameters:
+      - name: Authorization
+        in: header
+        description: JWT used for Authentication
+        required: false
+        type: string
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/MatchRecruitBbmatchingMatch_recruitResponseCollection'
+        "401":
+          description: Unauthorized response.
+          schema:
+            $ref: '#/definitions/MatchRecruitListMatchRecruitmentUnauthorizedResponseBody'
+      schemes:
+      - http
+      security:
+      - jwt_header_Authorization: []
+  /v1/match_recruit/match/{id}:
+    get:
+      tags:
+      - MatchRecruit
+      summary: Get Match Recruit MatchRecruit
+      description: |
+        指定したIDの募集試合を取得
+
+        Required security scopes:
+      operationId: MatchRecruit#Get Match Recruit
+      produces:
+      - application/json; charset=utf-8
+      parameters:
+      - name: id
+        in: path
+        description: 募集試合のID
+        required: true
+        type: integer
+      - name: Authorization
+        in: header
+        description: JWT used for Authentication
+        required: false
+        type: string
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/MatchRecruitGet Match RecruitResponseBody'
+        "401":
+          description: Unauthorized response.
+          schema:
+            $ref: '#/definitions/MatchRecruitGetMatchRecruitUnauthorizedResponseBody'
+      schemes:
+      - http
+      security:
+      - jwt_header_Authorization: []
   /v1/users:
     get:
       tags:
@@ -199,6 +264,46 @@ paths:
       security:
       - jwt_header_Authorization: []
 definitions:
+  BbmatchingMatch_recruitResponse:
+    title: 'Mediatype identifier: application/vnd.bbmatching.match_recruit+json; view=default'
+    type: object
+    properties:
+      comment:
+        type: string
+        description: 主催チームからのコメント
+        example: Consequatur sit deleniti est iusto eum.
+      date:
+        type: string
+        description: 試合が行われる日時
+        example: "2020-04-11 10:00:00"
+      disabled:
+        type: boolean
+        description: 試合の募集が終了しているかどうか
+        example: true
+      location:
+        type: string
+        description: 試合が行われる場所
+        example: 多摩川河川敷
+        maxLength: 30
+      user_id:
+        type: string
+        description: FirebaseのユーザーID
+        example: XRQ85mtXnINISH25zfM0m5RlC6L2
+        minLength: 28
+        maxLength: 28
+    description: Match Recruitment Response (default view)
+    example:
+      comment: Ipsam perspiciatis.
+      date: "2020-04-11 10:00:00"
+      disabled: true
+      location: 多摩川河川敷
+      user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
+    required:
+    - user_id
+    - location
+    - date
+    - comment
+    - disabled
   BbmatchingUserResponse:
     title: 'Mediatype identifier: application/vnd.bbmatching.user+json; view=default'
     type: object
@@ -246,6 +351,83 @@ definitions:
     - phoneNumber
     - photoURL
     - email_verified
+  MatchRecruitBbmatchingMatch_recruitResponseCollection:
+    title: 'Mediatype identifier: application/vnd.bbmatching.match_recruit+json; type=collection;
+      view=default'
+    type: array
+    items:
+      $ref: '#/definitions/BbmatchingMatch_recruitResponse'
+    description: List Match RecruitmentResponseBody is the result type for an array
+      of BbmatchingMatch_recruitResponse (default view)
+    example:
+    - comment: Aut saepe cum pariatur.
+      date: "2020-04-11 10:00:00"
+      disabled: true
+      location: 多摩川河川敷
+      user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
+    - comment: Aut saepe cum pariatur.
+      date: "2020-04-11 10:00:00"
+      disabled: true
+      location: 多摩川河川敷
+      user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
+    - comment: Aut saepe cum pariatur.
+      date: "2020-04-11 10:00:00"
+      disabled: true
+      location: 多摩川河川敷
+      user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
+    - comment: Aut saepe cum pariatur.
+      date: "2020-04-11 10:00:00"
+      disabled: true
+      location: 多摩川河川敷
+      user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
+  MatchRecruitGet Match RecruitResponseBody:
+    title: 'Mediatype identifier: application/vnd.bbmatching.match_recruit+json; view=default'
+    type: object
+    properties:
+      comment:
+        type: string
+        description: 主催チームからのコメント
+        example: Sit dolorem repudiandae tempore consequatur est.
+      date:
+        type: string
+        description: 試合が行われる日時
+        example: "2020-04-11 10:00:00"
+      disabled:
+        type: boolean
+        description: 試合の募集が終了しているかどうか
+        example: true
+      location:
+        type: string
+        description: 試合が行われる場所
+        example: 多摩川河川敷
+        maxLength: 30
+      user_id:
+        type: string
+        description: FirebaseのユーザーID
+        example: XRQ85mtXnINISH25zfM0m5RlC6L2
+        minLength: 28
+        maxLength: 28
+    description: Get Match RecruitResponseBody result type (default view)
+    example:
+      comment: Illum amet ipsum dolorem.
+      date: "2020-04-11 10:00:00"
+      disabled: false
+      location: 多摩川河川敷
+      user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
+    required:
+    - user_id
+    - location
+    - date
+    - comment
+    - disabled
+  MatchRecruitGetMatchRecruitUnauthorizedResponseBody:
+    title: MatchRecruitGetMatchRecruitUnauthorizedResponseBody
+    type: string
+    example: Aliquid dignissimos.
+  MatchRecruitListMatchRecruitmentUnauthorizedResponseBody:
+    title: MatchRecruitListMatchRecruitmentUnauthorizedResponseBody
+    type: string
+    example: Quia vel aut dolor quisquam.
   UserBbmatchingUserResponseCollection:
     title: 'Mediatype identifier: application/vnd.bbmatching.user+json; type=collection;
       view=default'
@@ -271,7 +453,7 @@ definitions:
     title: UserDeleteCurrentUserUnauthorizedResponseBody
     type: string
     description: Credentials are invalid
-    example: Eaque eligendi.
+    example: Accusamus tenetur magni.
   UserGet Current UserResponseBody:
     title: 'Mediatype identifier: application/vnd.bbmatching.user+json; view=default'
     type: object
@@ -308,7 +490,7 @@ definitions:
     example:
       UserName: Chunichi Dragons
       email: chunichi@example.com
-      email_verified: true
+      email_verified: false
       phoneNumber: "+819012345678"
       photoURL: http://img.com
       user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
@@ -346,7 +528,7 @@ definitions:
       email_verified:
         type: boolean
         description: ユーザーのプライマリメールアドレスが確認されているか。
-        example: true
+        example: false
       phoneNumber:
         type: string
         description: チームのメイン電話番号
@@ -366,7 +548,7 @@ definitions:
     example:
       UserName: Chunichi Dragons
       email: chunichi@example.com
-      email_verified: false
+      email_verified: true
       phoneNumber: "+819012345678"
       photoURL: http://img.com
       user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
@@ -381,22 +563,22 @@ definitions:
     title: UserGetCurrentUserUnauthorizedResponseBody
     type: string
     description: Credentials are invalid
-    example: Non error omnis aliquid iste earum est.
+    example: Dicta natus dolorem.
   UserGetJWTUnauthorizedResponseBody:
     title: UserGetJWTUnauthorizedResponseBody
     type: string
     description: Credentials are invalid
-    example: Ut saepe aut porro velit est nobis.
+    example: Omnis dolorum quo excepturi vel dignissimos praesentium.
   UserGetUserUnauthorizedResponseBody:
     title: UserGetUserUnauthorizedResponseBody
     type: string
     description: Credentials are invalid
-    example: Ad non quia illo ut.
+    example: Necessitatibus dolorem nemo voluptatem porro molestiae praesentium.
   UserListUserUnauthorizedResponseBody:
     title: UserListUserUnauthorizedResponseBody
     type: string
     description: Credentials are invalid
-    example: Eos quia saepe.
+    example: Totam fugit eaque possimus reprehenderit.
   UserUpdate Current UserResponseBody:
     title: 'Mediatype identifier: application/vnd.bbmatching.user+json; view=default'
     type: object
@@ -413,7 +595,7 @@ definitions:
       email_verified:
         type: boolean
         description: ユーザーのプライマリメールアドレスが確認されているか。
-        example: true
+        example: false
       phoneNumber:
         type: string
         description: チームのメイン電話番号
@@ -433,7 +615,7 @@ definitions:
     example:
       UserName: Chunichi Dragons
       email: chunichi@example.com
-      email_verified: true
+      email_verified: false
       phoneNumber: "+819012345678"
       photoURL: http://img.com
       user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
@@ -482,7 +664,7 @@ definitions:
     title: UserUpdateCurrentUserUnauthorizedResponseBody
     type: string
     description: Credentials are invalid
-    example: Quis iusto cumque aperiam.
+    example: Deserunt alias dolores aut.
 securityDefinitions:
   jwt_header_Authorization:
     type: apiKey

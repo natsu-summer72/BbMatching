@@ -84,6 +84,9 @@ var GetUserPayload = Type("GetUserPayload", func(){
 
 // Match Recruitment
 var MatchRecruitProfile = Type("MatchRecruitProfile", func(){
+	Attribute("id", Int, func(){
+		Description("募集試合のID")
+	})
 	Attribute("user_id", func(){
 		Description("FirebaseのユーザーID")
 		Example("XRQ85mtXnINISH25zfM0m5RlC6L2")
@@ -102,7 +105,16 @@ var MatchRecruitProfile = Type("MatchRecruitProfile", func(){
 	Attribute("comment", func(){
 		Description("主催チームからのコメント")
 	})
-	Attribute("disabled", func(){
+	Attribute("disabled", Boolean, func(){
 		Description("試合の募集が終了しているかどうか")
 	})
+})
+
+
+var GetMatchRecruitPayload = Type("GetMatchRecruitPayload", func(){
+	Reference(JWT)
+	Reference(MatchRecruitProfile)
+	Token("token")
+	Attribute("id")
+	Required("id")
 })

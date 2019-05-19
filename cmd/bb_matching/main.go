@@ -73,33 +73,6 @@ func main() {
 	}
 
 
-	// Databaseのテスト(MatchAPIを実装したら消す)
-	type Recruit struct {
-		id int64
-		user_id string
-		location string
-		date string
-		comment string
-		disabled bool
-		created_at string
-	}
-
-
-	rows, err := Database.Query("SELECT * from match_recruit")
-	defer rows.Close()
-	if err!=nil{
-		panic(err.Error())
-	}
-	for rows.Next() {
-		recruit:=Recruit{}
-		err = rows.Scan(&recruit.id, &recruit.user_id, &recruit.location, &recruit.date, &recruit.comment, &recruit.disabled, &recruit.created_at)
-		if err != nil {
-			panic(err.Error())
-		}
-		println(recruit.location)
-	}
-
-
 	// Initialize the services.
 	var (
 		userSvc user.Service
