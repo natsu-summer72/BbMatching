@@ -19,7 +19,7 @@ https://goa.design
 
 ##### Swagger-ui によるAPI管理画面
 APIの管理画面の例
- <img src=https://github.com/natsu-summer72/BbMatching/blob/master/example/swagger-ui.png>
+ <img src=https://github.com/natsu-summer72/BbMatching/blob/master/example/swagger_console.png>
  
  APIの実行も可能
  <img src=https://github.com/natsu-summer72/BbMatching/blob/master/example/API_console.png>
