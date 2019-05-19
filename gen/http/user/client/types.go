@@ -18,6 +18,8 @@ import (
 // UpdateCurrentUserRequestBody is the type of the "User" service "Update
 // current user" endpoint HTTP request body.
 type UpdateCurrentUserRequestBody struct {
+	// firebaseのユーザーID
+	UserID *string `form:"user_id,omitempty" json:"user_id,omitempty" xml:"user_id,omitempty"`
 	// チームのプライマリメールアドレス
 	Email *string `form:"email,omitempty" json:"email,omitempty" xml:"email,omitempty"`
 	// チームのメイン電話番号
@@ -136,6 +138,7 @@ type BbmatchingUserResponse struct {
 // payload of the "Update current user" endpoint of the "User" service.
 func NewUpdateCurrentUserRequestBody(p *user.UpdateUserPayload) *UpdateCurrentUserRequestBody {
 	body := &UpdateCurrentUserRequestBody{
+		UserID:      p.UserID,
 		Email:       p.Email,
 		PhoneNumber: p.PhoneNumber,
 		PhotoURL:    p.PhotoURL,

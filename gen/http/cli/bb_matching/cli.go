@@ -241,8 +241,9 @@ Example:
     `+os.Args[0]+` user update current user --body '{
       "UserName": "Chunichi Dragons",
       "email": "chunichi@example.com",
-      "phoneNumber": "09012345678",
-      "photoURL": "http://img.com"
+      "phoneNumber": "+819012345678",
+      "photoURL": "http://img.com",
+      "user_id": "XRQ85mtXnINISH25zfM0m5RlC6L2"
    }' --token "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ"
 `, os.Args[0])
 }

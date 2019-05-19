@@ -99,6 +99,8 @@ type BbmatchingUserCollection []*BbmatchingUser
 type UpdateUserPayload struct {
 	// JWT used for Authentication
 	Token *string
+	// firebaseのユーザーID
+	UserID *string
 	// チームのプライマリメールアドレス
 	Email *string
 	// チームのメイン電話番号
@@ -255,8 +257,8 @@ func newBbmatchingUserTiny(vres *userviews.BbmatchingUserView) *BbmatchingUser {
 	return res
 }
 
-// newBbmatchingUserView projects result type BbmatchingUser into projected
-// type BbmatchingUserView using the "default" view.
+// newBbmatchingUserView projects result type BbmatchingUser to projected type
+// BbmatchingUserView using the "default" view.
 func newBbmatchingUserView(res *BbmatchingUser) *userviews.BbmatchingUserView {
 	vres := &userviews.BbmatchingUserView{
 		UserID:        &res.UserID,
@@ -269,7 +271,7 @@ func newBbmatchingUserView(res *BbmatchingUser) *userviews.BbmatchingUserView {
 	return vres
 }
 
-// newBbmatchingUserViewTiny projects result type BbmatchingUser into projected
+// newBbmatchingUserViewTiny projects result type BbmatchingUser to projected
 // type BbmatchingUserView using the "tiny" view.
 func newBbmatchingUserViewTiny(res *BbmatchingUser) *userviews.BbmatchingUserView {
 	vres := &userviews.BbmatchingUserView{
@@ -301,7 +303,7 @@ func newBbmatchingUserCollectionTiny(vres userviews.BbmatchingUserCollectionView
 }
 
 // newBbmatchingUserCollectionView projects result type
-// BbmatchingUserCollection into projected type BbmatchingUserCollectionView
+// BbmatchingUserCollection to projected type BbmatchingUserCollectionView
 // using the "default" view.
 func newBbmatchingUserCollectionView(res BbmatchingUserCollection) userviews.BbmatchingUserCollectionView {
 	vres := make(userviews.BbmatchingUserCollectionView, len(res))
@@ -312,7 +314,7 @@ func newBbmatchingUserCollectionView(res BbmatchingUserCollection) userviews.Bbm
 }
 
 // newBbmatchingUserCollectionViewTiny projects result type
-// BbmatchingUserCollection into projected type BbmatchingUserCollectionView
+// BbmatchingUserCollection to projected type BbmatchingUserCollectionView
 // using the "tiny" view.
 func newBbmatchingUserCollectionViewTiny(res BbmatchingUserCollection) userviews.BbmatchingUserCollectionView {
 	vres := make(userviews.BbmatchingUserCollectionView, len(res))
@@ -331,7 +333,7 @@ func newBbmatchingJWT(vres *userviews.BbmatchingJWTView) *BbmatchingJWT {
 	return res
 }
 
-// newBbmatchingJWTView projects result type BbmatchingJWT into projected type
+// newBbmatchingJWTView projects result type BbmatchingJWT to projected type
 // BbmatchingJWTView using the "default" view.
 func newBbmatchingJWTView(res *BbmatchingJWT) *userviews.BbmatchingJWTView {
 	vres := &userviews.BbmatchingJWTView{

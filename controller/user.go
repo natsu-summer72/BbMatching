@@ -105,12 +105,42 @@ func (s *usersrvc) UpdateCurrentUser(ctx context.Context, p *user.UpdateUserPayl
 	res = &user.BbmatchingUser{}
 	view = "default"
 	s.logger.Print("user.Update current user")
+
+	verifiedToken, err := s.authClient.VerifyIDToken(ctx, *p.Token)
+
+	params := (&auth.UserToUpdate{}).
+		Email(*p.Email).
+		PhoneNumber(*p.PhoneNumber).
+		DisplayName(*p.UserName).
+		PhotoURL(*p.PhotoURL)
+	u, err := s.authClient.UpdateUser(ctx, verifiedToken.UID , params)
+	if err!=nil {
+		return
+	}
+
+	res = &user.BbmatchingUser{
+		UserID: *p.UserID,
+		UserName: u.DisplayName,
+		Email: u.Email,
+		PhotoURL: u.PhotoURL,
+		PhoneNumber: u.PhoneNumber,
+		EmailVerified: u.EmailVerified,
+	}
+
 	return
 }
 
 // 現在のセッションに紐づくユーザーを削除します。
 func (s *usersrvc) DeleteCurrentUser(ctx context.Context, p *user.SessionTokenPayload) (err error) {
 	s.logger.Print("user.Delete current user")
+
+	verifiedToken, err := s.authClient.VerifyIDToken(ctx, *p.Token)
+
+	err = s.authClient.DeleteUser(ctx, verifiedToken.UID)
+	if err!=nil {
+		return
+	}
+
 	return
 }
 

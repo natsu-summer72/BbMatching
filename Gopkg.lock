@@ -162,25 +162,34 @@
   version = "v0.21.0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:732dfa36d1a126f2c18d6f904b320c605a4a1843b56c1cf8b276e3d0e920865c"
+  digest = "1:f09bf793bea2cbf65f7f5e974845309c6ec41de3d9c3211278617ebab7063d9c"
   name = "goa.design/goa"
   packages = [
     ".",
+    "codegen",
+    "codegen/cli",
+    "codegen/example",
+    "codegen/generator",
+    "codegen/service",
     "dsl",
     "eval",
     "expr",
+    "grpc/codegen",
     "http",
+    "http/codegen",
+    "http/codegen/openapi",
     "http/middleware",
     "middleware",
+    "pkg",
     "security",
   ]
   pruneopts = "UT"
-  revision = "c2314e4e02464766361e99b238b80b20e6eb28d8"
+  revision = "de50fdd7a56f4d7fbd13794667ace84af43c75b0"
+  version = "v2.0.0"
 
 [[projects]]
   branch = "master"
-  digest = "1:f04f91f699638081f3d9659950764321bc0602076fc5fd8177c18b185ad3fdd8"
+  digest = "1:1b13e8770142a9251361b13a3b8b9b77296be6fa32856c937b346a45f93c845c"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -193,11 +202,11 @@
     "trace",
   ]
   pruneopts = "UT"
-  revision = "a4d6f7feada510cc50e69a37b484cb0fdc6b7876"
+  revision = "3ec19112720433827bbce8be9342797f5a6aaaf9"
 
 [[projects]]
   branch = "master"
-  digest = "1:645cb780e4f3177111b40588f0a7f5950efcfb473e7ff41d8d81b2ba5eaa6ed5"
+  digest = "1:85a6bd7dc73d56e1208ebf9a904516a92aec6e9a7cebff5fef2a1ab24c01a308"
   name = "golang.org/x/oauth2"
   packages = [
     ".",
@@ -207,15 +216,15 @@
     "jwt",
   ]
   pruneopts = "UT"
-  revision = "9f3314589c9a9136388751d9adae6b0ed400978a"
+  revision = "950ef44c6e079baf075030377d90bf0c7e4b7b7a"
 
 [[projects]]
   branch = "master"
-  digest = "1:4fc43e824f7e546353de724c00507b1d9c0bab56344b10c2330a97f166a0fba7"
+  digest = "1:3851a6d548ec5a808e396408f03a30b8d05ef4426db7ad8688f639b2d88b47bd"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "a5b02f93d862f065920dd6a40dddc66b60d0dec4"
+  revision = "61b9204099cb1bebc803c9ffb9b2d3acd9d457d9"
 
 [[projects]]
   digest = "1:8d8faad6b12a3a4c819a3f9618cb6ee1fa1cfc33253abeeea8b55336721e3405"
@@ -243,6 +252,26 @@
   version = "v0.3.2"
 
 [[projects]]
+  branch = "master"
+  digest = "1:93f3f17886abf8d17ff07ece88d6e1974226f5638d216041bd2234ca03ef848c"
+  name = "golang.org/x/tools"
+  packages = [
+    "go/ast/astutil",
+    "go/gcexportdata",
+    "go/internal/gcimporter",
+    "go/internal/packagesdriver",
+    "go/packages",
+    "go/types/typeutil",
+    "imports",
+    "internal/fastwalk",
+    "internal/gopathwalk",
+    "internal/module",
+    "internal/semver",
+  ]
+  pruneopts = "UT"
+  revision = "d88f79806bbd013f54a668506864ce559edf6f0a"
+
+[[projects]]
   digest = "1:3a45dd12dacaa23473a5495cb15415c4d5c9db1e166a0a03dee23bb11f0bd4b1"
   name = "google.golang.org/api"
   packages = [
@@ -265,7 +294,7 @@
   version = "v0.5.0"
 
 [[projects]]
-  digest = "1:9265d12c2ead1baca4d1c9843d2f4eb1f2b28d6941bc6276ac8f0f2d9e683f17"
+  digest = "1:32d1ec4837a1c93e01e1748c575cc27a9dd34c6ce0e07f569dd9fd6281dd04df"
   name = "google.golang.org/appengine"
   packages = [
     ".",
@@ -283,12 +312,12 @@
     "urlfetch",
   ]
   pruneopts = "UT"
-  revision = "54a98f90d1c46b7731eb8fb305d2a321c30ef610"
-  version = "v1.5.0"
+  revision = "4c25cacc810c02874000e4f7071286a8e96b2515"
+  version = "v1.6.0"
 
 [[projects]]
   branch = "master"
-  digest = "1:aa324869c5738a4e0544951514821527e210fc958518082afdaa0758a5ccf50d"
+  digest = "1:83bdd85e8d8b26000eb532e65ee9830c8f0b8462d7b04bfc6c5fe6656c918320"
   name = "google.golang.org/genproto"
   packages = [
     "googleapis/api/annotations",
@@ -300,7 +329,7 @@
     "googleapis/type/latlng",
   ]
   pruneopts = "UT"
-  revision = "d00d292a067ce1aa0017b40ca75437b42461fa61"
+  revision = "bb713bdc0e5239f2b68e560efbe1c701a6fe78f9"
 
 [[projects]]
   digest = "1:10e315fc07ce6c3252fc2467b10434e5bd742941d9d405cde49a13333dcf136a"
@@ -344,6 +373,14 @@
   revision = "25c4f928eaa6d96443009bd842389fb4fa48664e"
   version = "v1.20.1"
 
+[[projects]]
+  digest = "1:4d2e5a73dc1500038e504a8d78b986630e3626dc027bc030ba5c75da257cdb96"
+  name = "gopkg.in/yaml.v2"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "51d6538a90f86fe93ac480b35f37b2be17fef232"
+  version = "v2.2.2"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
@@ -353,6 +390,7 @@
     "github.com/go-sql-driver/mysql",
     "github.com/joho/godotenv",
     "goa.design/goa",
+    "goa.design/goa/codegen/generator",
     "goa.design/goa/dsl",
     "goa.design/goa/http",
     "goa.design/goa/http/middleware",

@@ -219,7 +219,7 @@ definitions:
       phoneNumber:
         type: string
         description: チームのメイン電話番号
-        example: "09012345678"
+        example: "+819012345678"
         pattern: ^\+?[\d]{10,}$
       photoURL:
         type: string
@@ -236,7 +236,7 @@ definitions:
       UserName: Chunichi Dragons
       email: chunichi@example.com
       email_verified: false
-      phoneNumber: "09012345678"
+      phoneNumber: "+819012345678"
       photoURL: http://img.com
       user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
     required:
@@ -258,13 +258,13 @@ definitions:
     - UserName: Chunichi Dragons
       email: chunichi@example.com
       email_verified: true
-      phoneNumber: "09012345678"
+      phoneNumber: "+819012345678"
       photoURL: http://img.com
       user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
     - UserName: Chunichi Dragons
       email: chunichi@example.com
       email_verified: true
-      phoneNumber: "09012345678"
+      phoneNumber: "+819012345678"
       photoURL: http://img.com
       user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
   UserDeleteCurrentUserUnauthorizedResponseBody:
@@ -292,7 +292,7 @@ definitions:
       phoneNumber:
         type: string
         description: チームのメイン電話番号
-        example: "09012345678"
+        example: "+819012345678"
         pattern: ^\+?[\d]{10,}$
       photoURL:
         type: string
@@ -309,7 +309,7 @@ definitions:
       UserName: Chunichi Dragons
       email: chunichi@example.com
       email_verified: true
-      phoneNumber: "09012345678"
+      phoneNumber: "+819012345678"
       photoURL: http://img.com
       user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
     required:
@@ -350,7 +350,7 @@ definitions:
       phoneNumber:
         type: string
         description: チームのメイン電話番号
-        example: "09012345678"
+        example: "+819012345678"
         pattern: ^\+?[\d]{10,}$
       photoURL:
         type: string
@@ -367,7 +367,7 @@ definitions:
       UserName: Chunichi Dragons
       email: chunichi@example.com
       email_verified: false
-      phoneNumber: "09012345678"
+      phoneNumber: "+819012345678"
       photoURL: http://img.com
       user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
     required:
@@ -417,7 +417,7 @@ definitions:
       phoneNumber:
         type: string
         description: チームのメイン電話番号
-        example: "09012345678"
+        example: "+819012345678"
         pattern: ^\+?[\d]{10,}$
       photoURL:
         type: string
@@ -434,7 +434,7 @@ definitions:
       UserName: Chunichi Dragons
       email: chunichi@example.com
       email_verified: true
-      phoneNumber: "09012345678"
+      phoneNumber: "+819012345678"
       photoURL: http://img.com
       user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
     required:
@@ -460,17 +460,24 @@ definitions:
       phoneNumber:
         type: string
         description: チームのメイン電話番号
-        example: "09012345678"
+        example: "+819012345678"
         pattern: ^\+?[\d]{10,}$
       photoURL:
         type: string
         description: チームの写真URL
         example: http://img.com
+      user_id:
+        type: string
+        description: firebaseのユーザーID
+        example: XRQ85mtXnINISH25zfM0m5RlC6L2
+        minLength: 28
+        maxLength: 28
     example:
       UserName: Chunichi Dragons
       email: chunichi@example.com
-      phoneNumber: "09012345678"
+      phoneNumber: "+819012345678"
       photoURL: http://img.com
+      user_id: XRQ85mtXnINISH25zfM0m5RlC6L2
   UserUpdateCurrentUserUnauthorizedResponseBody:
     title: UserUpdateCurrentUserUnauthorizedResponseBody
     type: string

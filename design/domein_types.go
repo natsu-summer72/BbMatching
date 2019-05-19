@@ -41,7 +41,7 @@ var UserProfile = Type("UserProfile", func(){
 	Attribute("phoneNumber", func(){
 		Description("チームのメイン電話番号")
 		Pattern(phoneNumberPattern)
-		Example("09012345678")
+		Example("+819012345678")
 	})
 	Attribute("photoURL", func(){
 		Description("チームの写真URL")
@@ -62,6 +62,7 @@ var UpdateUserPayload = Type("UpdateUserPayload", func(){
 	Reference(JWT)
 	Reference(UserProfile)
 	Token("token")
+	Attribute("user_id")
 	Attribute("email")
 	Attribute("phoneNumber")
 	Attribute("photoURL")

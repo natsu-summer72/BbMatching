@@ -72,7 +72,7 @@ func BuildUpdateCurrentUserPayload(userUpdateCurrentUserBody string, userUpdateC
 	{
 		err = json.Unmarshal([]byte(userUpdateCurrentUserBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"UserName\": \"Chunichi Dragons\",\n      \"email\": \"chunichi@example.com\",\n      \"phoneNumber\": \"09012345678\",\n      \"photoURL\": \"http://img.com\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, example of valid JSON:\n%s", "'{\n      \"UserName\": \"Chunichi Dragons\",\n      \"email\": \"chunichi@example.com\",\n      \"phoneNumber\": \"+819012345678\",\n      \"photoURL\": \"http://img.com\",\n      \"user_id\": \"XRQ85mtXnINISH25zfM0m5RlC6L2\"\n   }'")
 		}
 	}
 	var token *string
@@ -82,6 +82,7 @@ func BuildUpdateCurrentUserPayload(userUpdateCurrentUserBody string, userUpdateC
 		}
 	}
 	v := &user.UpdateUserPayload{
+		UserID:      body.UserID,
 		Email:       body.Email,
 		PhoneNumber: body.PhoneNumber,
 		PhotoURL:    body.PhotoURL,

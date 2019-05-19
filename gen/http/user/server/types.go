@@ -18,6 +18,8 @@ import (
 // UpdateCurrentUserRequestBody is the type of the "User" service "Update
 // current user" endpoint HTTP request body.
 type UpdateCurrentUserRequestBody struct {
+	// firebaseのユーザーID
+	UserID *string `form:"user_id,omitempty" json:"user_id,omitempty" xml:"user_id,omitempty"`
 	// チームのプライマリメールアドレス
 	Email *string `form:"email,omitempty" json:"email,omitempty" xml:"email,omitempty"`
 	// チームのメイン電話番号
@@ -364,6 +366,7 @@ func NewListUserSessionTokenPayload(token *string) *user.SessionTokenPayload {
 // user endpoint payload.
 func NewUpdateCurrentUserUpdateUserPayload(body *UpdateCurrentUserRequestBody, token *string) *user.UpdateUserPayload {
 	v := &user.UpdateUserPayload{
+		UserID:      body.UserID,
 		Email:       body.Email,
 		PhoneNumber: body.PhoneNumber,
 		PhotoURL:    body.PhotoURL,
@@ -391,6 +394,16 @@ func NewGetJWTPayload(userID string) *user.GetJWTPayload {
 // ValidateUpdateCurrentUserRequestBody runs the validations defined on Update
 // Current UserRequestBody
 func ValidateUpdateCurrentUserRequestBody(body *UpdateCurrentUserRequestBody) (err error) {
+	if body.UserID != nil {
+		if utf8.RuneCountInString(*body.UserID) < 28 {
+			err = goa.MergeErrors(err, goa.InvalidLengthError("body.user_id", *body.UserID, utf8.RuneCountInString(*body.UserID), 28, true))
+		}
+	}
+	if body.UserID != nil {
+		if utf8.RuneCountInString(*body.UserID) > 28 {
+			err = goa.MergeErrors(err, goa.InvalidLengthError("body.user_id", *body.UserID, utf8.RuneCountInString(*body.UserID), 28, false))
+		}
+	}
 	if body.Email != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("body.email", *body.Email, goa.FormatEmail))
 	}
