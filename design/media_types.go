@@ -47,3 +47,27 @@ var JWTResponse = ResultType("application/vnd.bbmatching.jwt+json", func(){
 			})
 	})
 })
+
+
+var MatchRecruitResponse = ResultType("application/vnd.bbmatching.match_recruit+json", func(){
+	Description("Match Recruitment Response")
+	ContentType("application/json; charset=utf-8")
+
+	Reference(MatchRecruitProfile)
+	Attributes(func(){
+		Attribute("user_id")
+		Attribute("location")
+		Attribute("date")
+		Attribute("comment")
+		Attribute("disabled")
+		Required("user_id", "location", "date", "comment", "disabled")
+	})
+
+	View("default", func(){
+		Attribute("user_id")
+		Attribute("location")
+		Attribute("date")
+		Attribute("comment")
+		Attribute("disabled")
+	})
+})

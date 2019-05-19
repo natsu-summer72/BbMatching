@@ -11,6 +11,8 @@ import (
 
 	usersvr "github.com/natsu-summer72/BbMatching/gen/http/user/server"
 	user "github.com/natsu-summer72/BbMatching/gen/user"
+	matchrecruit "github.com/natsu-summer72/BbMatching/gen/match_recruit"
+	matchrecruitsvr "github.com/natsu-summer72/BbMatching/gen/http/match_recruit/server"
 	goahttp "goa.design/goa/http"
 	httpmdlwr "goa.design/goa/http/middleware"
 	"goa.design/goa/middleware"
@@ -18,7 +20,7 @@ import (
 
 // handleHTTPServer starts configures and starts a HTTP server on the given
 // URL. It shuts down the server if any error is received in the error channel.
-func handleHTTPServer(ctx context.Context, u *url.URL, userEndpoints *user.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
+func handleHTTPServer(ctx context.Context, u *url.URL, userEndpoints *user.Endpoints, match_recruitEndpoints *matchrecruit.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
 
 	// Setup goa log adapter.
 	var (
@@ -50,13 +52,16 @@ func handleHTTPServer(ctx context.Context, u *url.URL, userEndpoints *user.Endpo
 	// responses.
 	var (
 		userServer *usersvr.Server
+		match_recruitServer *matchrecruitsvr.Server
 	)
 	{
 		eh := errorHandler(logger)
 		userServer = usersvr.New(userEndpoints, mux, dec, enc, eh)
+		match_recruitServer = matchrecruitsvr.New(match_recruitEndpoints, mux, dec, enc, eh)
 	}
 	// Configure the mux.
 	usersvr.Mount(mux, userServer)
+	matchrecruitsvr.Mount(mux, match_recruitServer)
 
 	// Wrap the multiplexer with additional middlewares. Middlewares mounted
 	// here apply to all the service endpoints.

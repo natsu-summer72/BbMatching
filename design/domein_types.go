@@ -80,3 +80,29 @@ var GetUserPayload = Type("GetUserPayload", func(){
 	})
 	Required("user_id")
 })
+
+
+// Match Recruitment
+var MatchRecruitProfile = Type("MatchRecruitProfile", func(){
+	Attribute("user_id", func(){
+		Description("FirebaseのユーザーID")
+		Example("XRQ85mtXnINISH25zfM0m5RlC6L2")
+		MaxLength(28)
+		MinLength(28)
+	})
+	Attribute("location", func(){
+		Description("試合が行われる場所")
+		Example("多摩川河川敷")
+		MaxLength(30)
+	})
+	Attribute("date", func(){
+		Description("試合が行われる日時")
+		Example("2020-04-11 10:00:00")
+	})
+	Attribute("comment", func(){
+		Description("主催チームからのコメント")
+	})
+	Attribute("disabled", func(){
+		Description("試合の募集が終了しているかどうか")
+	})
+})

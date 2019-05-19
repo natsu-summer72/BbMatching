@@ -11,7 +11,7 @@ var _ = API("BbM", func(){
 
 
 	Server("BbMatching",func(){
-		Services("User")
+		Services("User", "MatchRecruit")
 		Host("localhost", func(){
 			Description("development host")
 			URI("http://localhost:8080")

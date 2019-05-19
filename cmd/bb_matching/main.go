@@ -19,6 +19,7 @@ import (
 
 	bbm "github.com/natsu-summer72/BbMatching/controller"
 	"github.com/natsu-summer72/BbMatching/gen/user"
+	"github.com/natsu-summer72/BbMatching/gen/match_recruit"
 )
 
 func main() {
@@ -72,7 +73,6 @@ func main() {
 	}
 
 
-
 	// Databaseのテスト(MatchAPIを実装したら消す)
 	type Recruit struct {
 		id int64
@@ -103,18 +103,23 @@ func main() {
 	// Initialize the services.
 	var (
 		userSvc user.Service
+		match_rectuitSvc matchrecruit.Service
+
 	)
 	{
 		userSvc = bbm.NewUser(logger, authClient)
+		match_rectuitSvc = bbm.NewMatchRecruit(logger, authClient, Database)
 	}
 
 	// Wrap the services in endpoints that can be invoked from other services
 	// potentially running in different processes.
 	var (
 		userEndpoints *user.Endpoints
+		match_recruitEndpoints *matchrecruit.Endpoints
 	)
 	{
 		userEndpoints = user.NewEndpoints(userSvc)
+		match_recruitEndpoints = matchrecruit.NewEndpoints(match_rectuitSvc)
 	}
 
 	// Create channel used by both the signal handler and server goroutines
@@ -151,7 +156,7 @@ func main() {
 			} else if u.Port() == "" {
 				u.Host += ":80"
 			}
-			handleHTTPServer(ctx, u, userEndpoints, &wg, errc, logger, *dbgF)
+			handleHTTPServer(ctx, u, userEndpoints, match_recruitEndpoints, &wg, errc, logger, *dbgF)
 		}
 
 	default:
